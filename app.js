@@ -1,48 +1,50 @@
 const express = require("express");
 const app = express();
+const bodyParser = require("body-parser");
+const morgan = require('morgan');
+const cors = require('cors');
+const index = require('./routes/index');
+const hello = require('./routes/hello');
 
-const port = 1337;
 
-// Add a route
-app.get("/", (req, res) => {
-  const data = {
-    data: {
-      msg: "Hello World",
-    },
-  };
+const port = process.env.port || 1337;
 
-  res.json(data);
+app.use(cors());
+app.use(express.json());
+
+app.use('/', index);
+app.use('/hello', hello);
+
+if (process.env.NODE_ENV !== 'test') {
+  // use morgan to log at command line
+  app.use(morgan('combined')); // 'combined' outputs the Apache style LOGs
+}
+
+app.use((req, res, next) => {
+  console.log(req.method);
+  console.log(req.path);
+  next();
 });
 
-app.get("/user", (req, res) => {
-  res.json({
-    data: {
-      msg: "Got a GET request",
-    },
-  });
+app.use((req, res, next) => {
+  var err = new Error("Not Found");
+  err.status = 404;
+  next(err);
 });
 
-app.post("/user", (req, res) => {
-  res.json({
-    data: {
-      msg: "Got a POST request",
-    },
-  });
-});
+app.use((err, req, res, next) => {
+  if (res.headersSent) {
+    return next(err);
+  }
 
-app.put("/user", (req, res) => {
-  res.json({
-    data: {
-      msg: "Got a PUT request",
-    },
-  });
-});
-
-app.delete("/user", (req, res) => {
-  res.json({
-    data: {
-      msg: "Got a DELETE request",
-    },
+  res.status(err.status || 500).json({
+    "errors": [
+      {
+        "status": err.status,
+        "title": err.message,
+        "detail": err.message
+      }
+    ]
   });
 });
 
