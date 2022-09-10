@@ -5,9 +5,13 @@ const morgan = require('morgan');
 const cors = require('cors');
 const index = require('./routes/index');
 const hello = require('./routes/hello');
+require('dotenv').config()
 
+const port = process.env.PORT || 1337;
 
-const port = process.env.port || 1337;
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 
 app.use(cors());
 app.use(express.json());
