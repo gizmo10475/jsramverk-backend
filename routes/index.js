@@ -19,7 +19,6 @@ router.post("/", async (req, res) => {
     const newDoc = req.body;
 
     const result = await dataModel.insertDoc(newDoc);
-
     return res.status(201).json({ data: result });
 });
 
