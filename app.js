@@ -5,6 +5,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 const index = require('./routes/index');
 const hello = require('./routes/hello');
+const httpServer = require("http").createServer(app);
 require('dotenv').config()
 
 app.use(bodyParser.json());
@@ -23,35 +24,42 @@ if (process.env.NODE_ENV !== 'test') {
   app.use(morgan('combined')); // 'combined' outputs the Apache style LOGs
 }
 
-// app.use((req, res, next) => {
-//   console.log(req.method);
-//   console.log(req.path);
-//   next();
-// });
+const io = require("socket.io")(httpServer, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
 
-// app.use((req, res, next) => {
-//   var err = new Error("Not Found");
-//   err.status = 404;
-//   next(err);
-// });
+io.sockets.on('connection', function (socket) {
+  console.log('connected, ' + socket.id);
 
-// app.use((err, req, res, next) => {
-//   if (res.headersSent) {
-//     return next(err);
-//   }
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
 
-//   res.status(err.status || 500).json({
-//     "errors": [
-//       {
-//         "status": err.status,
-//         "title": err.message,
-//         "detail": err.message
-//       }
-//     ]
-//   });
-// });
+  socket.on('my message', (msg) => {
+    io.emit('my broadcast', `server: ${msg}`);
+  });
 
-const server = app.listen(port, () => {
+  socket.on('text editor', (msg) => {
+    io.emit('server editor', `${msg}`);
+  });
+
+  socket.on('text option', (msg) => {
+    io.emit('server option', `${msg}`);
+  });
+
+  socket.on('text alldata', (msg) => {
+    io.emit('server alldata', msg);
+  });
+
+});
+
+
+
+
+const server = httpServer.listen(port, () => {
   console.log(`Example API listening on port ${port}!`);
 });
 
