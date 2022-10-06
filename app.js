@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const morgan = require('morgan');
 const cors = require('cors');
 const index = require('./routes/index');
+const auth = require('./routes/auth');
 const hello = require('./routes/hello');
 const httpServer = require("http").createServer(app);
 require('dotenv').config()
@@ -17,6 +18,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/', index);
+app.use('/auth', auth);
 app.use('/hello', hello);
 
 if (process.env.NODE_ENV !== 'test') {
@@ -51,7 +53,7 @@ io.sockets.on('connection', function (socket) {
   });
 
   socket.on('text alldata', (msg) => {
-    io.emit('server alldata', msg);
+    io.broadcast.emit('server alldata', msg);
   });
 
 });

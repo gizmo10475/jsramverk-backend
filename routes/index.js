@@ -37,6 +37,21 @@ router.put('/', async (req, res) => {
     }
 });
 
+router.put('/addCollab', async (req, res) => {
+    try {
+        const oldId = req.body.id;
+        const newCollab = req.body.newCollab;
+
+        const result = await dataModel.addCollabToDoc(oldId, newCollab);
+
+        return res.status(201).json({ data: result });
+
+    } catch (err) {
+        console.error(err.message);
+        res.send(400).send('Server Error');
+    }
+});
+
 
 
 module.exports = router;

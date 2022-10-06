@@ -1,11 +1,10 @@
 const mongo = require("mongodb").MongoClient;
 // const config = require("./config.json");
-const collectionName = "docs";
 
 const database = {
-    getDb: async function getDb() {
-        let dsn = `mongodb://localhost:27017/docs`;
-        // let dsn = `mongodb+srv://${process.env.ATLAS_USERNAME}:${process.env.ATLAS_PASSWORD}@cluster0.icqjokc.mongodb.net/?retryWrites=true&w=majority`;
+    getDb: async function getDb(collectionName="docs") {
+        // let dsn = `mongodb://localhost:27017/docs`;
+        let dsn = `mongodb+srv://${process.env.ATLAS_USERNAME}:${process.env.ATLAS_PASSWORD}@cluster0.icqjokc.mongodb.net/?retryWrites=true&w=majority`;
 
 
         if (process.env.NODE_ENV === 'test') {

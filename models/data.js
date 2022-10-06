@@ -62,6 +62,28 @@ const data = {
             await db.client.close();
         }
 
+    },
+    addCollabToDoc: async function addCollabToDoc(oldId, newCollab) {
+        let db;
+
+        let filter = {
+            _id: ObjectId(oldId)
+        };
+
+
+        try {
+            db = await database.getDb();
+
+            const updateObject = await db.collection.updateOne(filter, { $push: { "collab": newCollab } });
+            console.log(updateObject);
+
+            return updateObject;
+        } catch (error) {
+            console.error(error.message);
+        } finally {
+            await db.client.close();
+        }
+
     }
 
 };
