@@ -15,6 +15,19 @@ router.get("/", async (req, res) => {
     }
 });
 
+router.get("/log", async (req, res) => {
+    try {
+        const allData = await dataModel.getAllData();
+
+        res.json(allData);
+    } catch (err) {
+        console.error(err.message);
+        res.send(400).send('Server Error');
+
+    }
+});
+
+
 router.post("/", async (req, res) => {
     const newDoc = req.body;
 

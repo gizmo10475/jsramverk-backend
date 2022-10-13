@@ -9,6 +9,12 @@ const hello = require('./routes/hello');
 const httpServer = require("http").createServer(app);
 require('dotenv').config()
 
+const visual = false; // PROD == FALSE
+const { graphqlHTTP } = require('express-graphql');
+const { GraphQLSchema } = require('graphql');
+const RootQueryType = require("./graphql/root.js");
+// const mutation = "mutation";
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -20,6 +26,16 @@ app.use(express.json());
 app.use('/', index);
 app.use('/auth', auth);
 app.use('/hello', hello);
+
+const schema = new GraphQLSchema({
+  query: RootQueryType
+});
+
+app.use('/graphql', graphqlHTTP({
+  schema: schema,
+  graphiql: visual,
+}));
+
 
 if (process.env.NODE_ENV !== 'test') {
   // use morgan to log at command line
