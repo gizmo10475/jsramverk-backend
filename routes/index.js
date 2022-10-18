@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+const nodemailer = require("nodemailer");
+const config = require("../config.json");
 
 const dataModel = require("../models/data");
 
@@ -66,5 +68,49 @@ router.put('/addCollab', async (req, res) => {
 });
 
 
+router.post("/sendmail", (req, res) => {
+    let user = req.body.email;
+    let sendTO = req.body.sendToEmail;
+
+    sendMail(user, sendTO, (err, info) => {
+        if (err) {
+            console.log(err);
+            res.status(400);
+            res.send({ error: "Failed to send email" });
+        } else {
+            // console.log("Email has been sent");
+            res.send(info);
+        }
+    });
+
+    return res.status(201).json({});
+});
+
+const sendMail = (user, sendTO, callback) => {
+    let transporter = nodemailer.createTransport({
+        service: "Outlook365",
+        host: "smtp.office365.com",
+        port: "587",
+        tls: {
+            ciphers: "SSLv3",
+            rejectUnauthorized: false,
+        },
+        auth: {
+            user: config.sendermail,
+            pass: config.senderpassword
+        },
+    });
+
+    const html = "<h3>" + user + " bjöd in dig till sitt dokument </h3> " +
+        " <p> Logga in på <a><i> https://www.student.bth.se/~edfa18/editor/jsramverk-editor/login </i></a> för att ta del av dokumentet.";
+
+    const mailOptions = {
+        from: config.sendermail,
+        to: sendTO,
+        subject: "Eddietor - Inbjudan tilll dokument",
+        html: html
+    };
+    transporter.sendMail(mailOptions, callback);
+}
 
 module.exports = router;
