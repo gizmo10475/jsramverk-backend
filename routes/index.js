@@ -102,7 +102,7 @@ const sendMail = (user, sendTO, callback) => {
     });
 
     const html = "<h3>" + user + " bjöd in dig till sitt dokument </h3> " +
-        " <p> Logga in på <a><i> https://www.student.bth.se/~edfa18/editor/jsramverk-editor/login </i></a> för att ta del av dokumentet.";
+        ' <p> Logga in på <i><a href="https://www.student.bth.se/~edfa18/editor/jsramverk-editor/">https://www.student.bth.se/~edfa18/editor/jsramverk-editor/</i></a> för att ta del av dokumentet.';
 
     const mailOptions = {
         from: config.sendermail,
